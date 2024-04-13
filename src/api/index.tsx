@@ -4,7 +4,34 @@ const generateCommunityId = (): number => {
 	return randomId;
 };
 
-export const createCommunity = async (communityName: string) => {
+export const updatePassword = async (Email: string,  newPassword: string) => {
+	try {
+		const response = await fetch(
+			`${process.env.NEXT_PUBLIC_AWS_BACKEND_API_URL}/updatePassword`,
+			{
+				method: "PUT",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					Email : Email,
+					Password: newPassword,
+				}),
+			}
+		);
+
+		if (!response.ok) {
+			throw new Error("Network response was not ok");
+		}
+
+		return response;
+	} catch (error) {
+		console.error("There was a problem with the updatePassword API:", error);
+		throw error;
+	}
+};
+
+export const createCommunity = async (communityName: string, username: string = "skip") => {
 	try {
 		const response = await fetch(
 			`${process.env.NEXT_PUBLIC_AWS_BACKEND_API_URL}/addCommunity`,
@@ -19,6 +46,7 @@ export const createCommunity = async (communityName: string) => {
 					CreatedDate: new Date(),
 					CommunityImage: "/images/default.png",
 					Chats: [],
+					// createdBy: username,
 					CommunityName: communityName,
 				}),
 			}
@@ -58,6 +86,30 @@ export const getCommunities = async (username: string) => {
 	}
 };
 
+export const getAllCommunities = async () => {
+	try {
+		const response = await fetch(
+			`${process.env.NEXT_PUBLIC_AWS_BACKEND_API_URL}/getAllCommunities`,
+			{
+				method: "GET",
+				headers: {
+					"Content-Type": "application/json",
+				},
+			}
+		);
+
+		if (!response.ok) {
+			throw new Error("Network response was not ok");
+		}
+
+		return response.json();
+	} catch (error) {
+		console.error("There was a problem with the getAllCommunities API:", error);
+		throw error;
+	}
+};
+
+
 export const searchCommunity = async (search: string) => {
 	try {
 		const response = await fetch(
@@ -83,6 +135,29 @@ export const searchCommunity = async (search: string) => {
 		throw error;
 	}
 };
+export const getAllUsers = async () => {
+	try {
+		const response = await fetch(
+			`${process.env.NEXT_PUBLIC_AWS_BACKEND_API_URL}/getAllUsers`,
+			{
+				method: "GET",
+				headers: {
+					"Content-Type": "application/json",
+				},
+			}
+
+		);
+		if (!response.ok) {
+			throw new Error("Network response was not ok");
+		}
+
+		return response.json();
+	}
+
+	catch (error) {
+		console.error("There was a problem with the getAllUsers API:", error);
+	}
+}
 
 // joinCommunity API
 export const joinCommunity = async (communityId: string, username: string) => {
@@ -139,6 +214,31 @@ export const leaveCommunity = async (communityId: string, username: string) => {
 	}
 };
 
+export const deleteCommunity = async (communityId: string) => {
+	try {
+		const response = await fetch(
+			`${process.env.NEXT_PUBLIC_AWS_BACKEND_API_URL}/deleteCommunity`,
+			{
+				method: "DELETE",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					CommunityId: communityId,
+				}),
+			}
+		);
+
+		if (!response.ok) {
+			throw new Error("Network response was not ok");
+		}
+
+		return response;
+	} catch (error) {
+		console.error("There was a problem with the deleteCommunity API:", error);
+		throw error;
+	}
+};
 export const saveChatMessage = async (message: SendMessage) => {
 	try {
 		const response = await fetch(
@@ -188,50 +288,50 @@ export const getChats = async (communityId: string) => {
 };
 
 export const saveImageToS3 = async (file: File, fileName?: String) => {
-    try {
-        // Read the file as base64
-        const base64 = await readFileAsBase64(file);
-        
-        if (!base64) {
-            throw new Error("Failed to read file as base64");
-        }
+	try {
+		// Read the file as base64
+		const base64 = await readFileAsBase64(file);
 
-        // Create the fileData object with base64 data and filename
-        const fileData = {
-            file_bytes: base64,
+		if (!base64) {
+			throw new Error("Failed to read file as base64");
+		}
+
+		// Create the fileData object with base64 data and filename
+		const fileData = {
+			file_bytes: base64,
 			file_name: `${fileName}.png` || file.name,
-        };
+		};
 
-        // Send a POST request to upload the file to S3
-        const response = await fetch(
-            `${process.env.NEXT_PUBLIC_AWS_BACKEND_API_URL}/upload`,
-            {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(fileData),
-            }
-        );
+		// Send a POST request to upload the file to S3
+		const response = await fetch(
+			`${process.env.NEXT_PUBLIC_AWS_BACKEND_API_URL}/upload`,
+			{
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify(fileData),
+			}
+		);
 
-        if (!response.ok) {
-            throw new Error("Network response was not ok");
-        }
+		if (!response.ok) {
+			throw new Error("Network response was not ok");
+		}
 
-        return response.json();
-    } catch (error) {
-        throw error;
-    }
+		return response.json();
+	} catch (error) {
+		throw error;
+	}
 };
 
 // Helper function to read file as base64
-const readFileAsBase64 = (file : File) => {
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = () => resolve(reader.result?.toString().replace(/^data:(.*,)?/, ''));
-        reader.onerror = (error) => reject(error);
-    });
+const readFileAsBase64 = (file: File) => {
+	return new Promise((resolve, reject) => {
+		const reader = new FileReader();
+		reader.readAsDataURL(file);
+		reader.onload = () => resolve(reader.result?.toString().replace(/^data:(.*,)?/, ''));
+		reader.onerror = (error) => reject(error);
+	});
 };
 
 export const setProfilePictureUser = async (email: string, profilePicture: string) => {
@@ -244,8 +344,8 @@ export const setProfilePictureUser = async (email: string, profilePicture: strin
 					"Content-Type": "application/json",
 				},
 				body: JSON.stringify({
-					Email : email,
-					ProfilePicture : profilePicture,
+					Email: email,
+					ProfilePicture: profilePicture,
 				}),
 			}
 		);
@@ -270,7 +370,7 @@ export const deleteUserAccount = async (email: string) => {
 					"Content-Type": "application/json",
 				},
 				body: JSON.stringify({
-					Email : email,
+					Email: email,
 				}),
 			}
 		);
@@ -295,7 +395,7 @@ export const TextToAudio = async (Text: String) => {
 					"Content-Type": "application/json",
 				},
 				body: JSON.stringify({
-					text : Text,
+					text: Text,
 				}),
 			}
 		);
