@@ -15,6 +15,7 @@ export const SignUpAPI = async (
 					Email: email,
 					Password: password,
 					Username: username,
+					Role: "Member",
 				}),
 			}
 		);
@@ -34,7 +35,6 @@ export const LoginAPI: (
 	email: string,
 	password: string
 ) => Promise<Response> = async (email, password) => {
-
 	try {
 		const response: any = await fetch(
 			`${process.env.NEXT_PUBLIC_AWS_BACKEND_API_URL}/login`,

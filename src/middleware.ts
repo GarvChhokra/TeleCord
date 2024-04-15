@@ -13,6 +13,12 @@ export default async function middleware(
 		return NextResponse.redirect(new URL("/chat", req.url));
 	}
 
+	if (req.nextUrl.pathname.startsWith("/admin") && isAuthenticated) {
+		if (token?.role !== "Admin") {
+			return NextResponse.redirect(new URL("/chat", req.url));
+		}
+	}
+
 	const authMiddleware = await withAuth({
 		pages: {
 			signIn: `/auth`,
@@ -24,5 +30,5 @@ export default async function middleware(
 }
 
 export const config = {
-	matcher: ["/chat", "/auth", "/chat/:pathname*"],
+	matcher: ["/chat", "/auth", "/admin", "/chat/:pathname*"],
 };

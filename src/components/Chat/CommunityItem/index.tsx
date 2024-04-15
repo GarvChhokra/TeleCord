@@ -81,7 +81,11 @@ const CommunityItem: React.FC<Community> = ({
 				</div>
 				<h6 className="text-small text-default-400">{time}</h6>
 				{isJoinable ? (
-					<Button className="mt-2 text-xs xl:mt-0" color="primary" onClick={onPressJoin}>
+					<Button
+						className="mt-2 text-xs xl:mt-0"
+						color="primary"
+						onClick={onPressJoin}
+					>
 						Join
 					</Button>
 				) : (

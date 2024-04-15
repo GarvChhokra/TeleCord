@@ -29,7 +29,7 @@ const authOptions: NextAuthOptions = {
 	],
 	secret: process.env.NEXTAUTH_SECRET,
 	callbacks: {
-		async session({ session }: { session: any }) {
+		async session({ session, token }: { session: any; token: any }) {
 			if (!session?.user?.email) {
 				return session;
 			}
@@ -43,6 +43,9 @@ const authOptions: NextAuthOptions = {
 				},
 				{} as any
 			);
+
+			// add role to token
+			token.role = sessionUser.Role;
 
 			session.user = { ...session?.user, ...filteredSessionUser };
 

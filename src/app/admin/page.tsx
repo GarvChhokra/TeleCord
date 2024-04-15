@@ -2,12 +2,7 @@ import AdminPanel from "@/components/Admin";
 import React from "react";
 
 const Admin = () => {
-  return (
-    <>
-      <div>Admin</div>
-      <AdminPanel />
-    </>
-  );
+	return <AdminPanel />;
 };
 
 export default Admin;
