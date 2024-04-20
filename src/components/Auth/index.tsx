@@ -47,7 +47,7 @@ const Auth = () => {
 							confirmButtonText: "Login",
 						}).then((result) => {
 							if (result.isConfirmed) {
-								router.push("/auth");
+								setAuthType("login")
 							}
 						});
 					}

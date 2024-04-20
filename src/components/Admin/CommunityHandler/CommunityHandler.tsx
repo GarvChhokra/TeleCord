@@ -9,13 +9,14 @@ import {
   getCommunities,
   joinCommunity,
   leaveCommunity,
-  MakeAdmin,
+  ChangeRole,
 } from "@/api";
 import Swal from "sweetalert2";
 import { GetUserAPI } from "@/api/authentication";
 
 const CommunityHandler: React.FC = () => {
   const [communities, setCommunities] = useState([]);
+  const [selectedEmail, setSelectedEmail] = useState<string>("");
   const [newCommunityName, setNewCommunityName] = useState<string>("");
   const [selectedCommunity, setSelectedCommunity] = useState<string | null>(
     null
@@ -119,19 +120,20 @@ const CommunityHandler: React.FC = () => {
     });
   };
 
-  const handleSelectUser = (email: string) => {
-      MakeAdmin(email).then((response) => {
+  const handleSelectUser = (email: string, role: string) => {
+    if(!email) return;
+    ChangeRole(email, role).then((response) => {
         if (response.ok) {
           Swal.fire({
             title: "Success!",
-            text: "Admin role assigned successfully!",
+            text: "Role assigned successfully!",
             icon: "success",
             confirmButtonText: "OK",
           });
         } else {
           Swal.fire({
             title: "Error!",
-            text: "Failed to assign admin role!",
+            text: "Failed to assign role!",
             icon: "error",
             confirmButtonText: "OK",
           });
@@ -203,7 +205,7 @@ const CommunityHandler: React.FC = () => {
         <div className="flex-1 p-7 mx-3 bg-primary rounded-lg shadow-md h-[300px]">
           <h2 className="text-lg font-semibold mb-4 text-white">Admin Role</h2>
           <select
-            onChange={(e) => handleSelectUser(e.target.value)}
+            onChange={(e) => setSelectedEmail(e.target.value)}
             className="select px-4 py-2 rounded-md focus:outline-none focus:border-purple-500 mb-5 flex w-full"
           >
             <option value="" disabled selected className="opacity-20">
@@ -218,6 +220,21 @@ const CommunityHandler: React.FC = () => {
                 </option>
               )
             )}
+          </select>
+
+          <select
+            onChange={(e) => handleSelectUser(selectedEmail, e.target.value)}
+            className="select px-4 py-2 rounded-md focus:outline-none focus:border-purple-500 mb-5 flex w-full"
+          >
+            <option value="" disabled selected className="opacity-20">
+              Select Role{" "}
+            </option>
+            <option value="Admin" className="text-black">
+              Admin
+            </option>
+            <option value="Member" className="text-black">
+              Member
+            </option>
           </select>
         </div>
       </div>

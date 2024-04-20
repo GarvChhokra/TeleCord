@@ -114,7 +114,10 @@ const CommunityDetails = ({ communityDetails }: any) => {
 					icon: "success",
 					confirmButtonText: "OK",
 				}).then(() => {
-					window.location.reload();
+					if(username === session?.user?.["Username"]){
+						window.location.href = "/chat";
+					}
+					else window.location.reload();
 				});
 			} else {
 				Swal.fire({
@@ -125,6 +128,7 @@ const CommunityDetails = ({ communityDetails }: any) => {
 				});
 			}
 		});
+
 	};
 
 	return (

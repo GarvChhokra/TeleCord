@@ -84,10 +84,10 @@ export const searchCommunity = async (search: string) => {
 	}
 };
 
-export const MakeAdmin = async (userEmail: string) => {
+export const ChangeRole = async (userEmail: string, role: string) => {
 	try {
 		const response = await fetch(
-			`${process.env.NEXT_PUBLIC_AWS_BACKEND_API_URL}/makeAdmin`,
+			`${process.env.NEXT_PUBLIC_AWS_BACKEND_API_URL}/changeRole`,
 			{
 				method: "PUT",
 				headers: {
@@ -95,7 +95,7 @@ export const MakeAdmin = async (userEmail: string) => {
 				},
 				body: JSON.stringify({
 					Email: userEmail,
-					Role: "Admin"
+					Role: role
 				}),
 			}
 		);
