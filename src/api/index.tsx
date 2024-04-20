@@ -289,6 +289,107 @@ export const deleteUserAccount = async (email: string) => {
 	}
 };
 
+export const DeleteCommunity = async (communityId: string) => {
+	console.log(communityId);
+	try {
+		const response = await fetch(
+			`${process.env.NEXT_PUBLIC_AWS_BACKEND_API_URL}/deleteCommunity`,
+			{
+				method: "DELETE",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					CommunityId: communityId,
+				}),
+			}
+		);
+
+		if (!response.ok) {
+			throw new Error("Network response was not ok");
+		}
+
+		return response;
+	} catch (error) {
+		throw error;
+	}
+}
+
+export const GetAllUsers = async () => {
+	try {
+		const response = await fetch(
+			`${process.env.NEXT_PUBLIC_AWS_BACKEND_API_URL}/getAllUsers`,
+			{
+				method: "GET",
+				headers: {
+					"Content-Type": "application/json",
+				},
+			}
+		);
+
+		if (!response.ok) {
+			throw new Error("Network response was not ok");
+		}
+
+		const users = await response.json();
+		const emails = users.map((user: any) => user.Email);
+
+		return emails;
+	} catch (error) {
+		throw error;
+	}
+}
+
+export const ChangePassword = async (email: string, password: string) => {
+	try {
+		const response = fetch(
+			`${process.env.NEXT_PUBLIC_AWS_BACKEND_API_URL}/changePswd`,
+			{
+				method: "PUT",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					Email: email,
+					Password: password,
+				}),
+			}
+		);
+
+		if (!(await response).ok) {
+			throw new Error("Network response was not ok");
+		}
+
+		return response;
+	} catch (error) {
+		throw error;
+	}
+}
+
+export const GetAllCommunities = async () => {
+	try {
+		const response = await fetch(
+			`${process.env.NEXT_PUBLIC_AWS_BACKEND_API_URL}/getAllCommunity`,
+			{
+				method: "GET",
+				headers: {
+					"Content-Type": "application/json",
+				},
+			}
+		);
+
+		if (!response.ok) {
+			throw new Error("Network response was not ok");
+		}
+
+		const community = await response.json();
+
+		return community;
+	} catch (error) {
+		throw error;
+	}
+}
+
 export const TextToAudio = async (Text: String) => {
 	try {
 		const response = await fetch(
