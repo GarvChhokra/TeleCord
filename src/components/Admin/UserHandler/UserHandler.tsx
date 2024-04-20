@@ -1,5 +1,8 @@
 "use client";
-import React, { useState } from "react";
+import { ChangePassword, deleteUserAccount, GetAllUsers } from "@/api";
+import { GetUserAPI, SignUpAPI } from "@/api/authentication";
+import React, { useEffect, useState } from "react";
+import Swal from "sweetalert2";
 
 const UserHandler = () => {
 	const [newUserName, setNewUserName] = useState("");
@@ -10,41 +13,91 @@ const UserHandler = () => {
 	const [newPassword, setNewPassword] = useState("");
 	const [users, setUsers] = useState([]);
 
+    useEffect(() => {
+        GetAllUsers().then((response) => {
+            setUsers(response);
+        }).catch((error) => {
+            console.error("Error fetching users:", error);
+        });
+    }, []);
+
 	const handleCreateUser = () => {
-		fetch("https://your-chalice-app-url/sign-up", {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify({
-				name: newUserName,
-				email: newUserEmail,
-				password: newUserPassword,
-			}),
+		GetUserAPI(newUserEmail).then((response) => {
+			if (response) {
+				Swal.fire({
+					title: "Error!",
+					text: "User already exists",
+					icon: "error",
+					confirmButtonText: "Try again",
+				});
+				throw new Error("User already exists");
+			}
+			else{
+				SignUpAPI(newUserEmail, newUserPassword, newUserName)
+				.then((res) => {
+					if (res.ok) {
+						Swal.fire({
+							title: "Success!",
+							text: "Account created successfully",
+							icon: "success",
+							confirmButtonText: "Login",
+						}).then((result) => {
+							if (result.isConfirmed) {
+								setNewUserEmail("");
+								setNewUserName("");
+								setNewUserPassword("");
+							}
+						});
+					}
+				})
+				.catch((err) => {
+					console.error("There was a problem with the sign up:", err);
+					Swal.fire({
+						title: "Error!",
+						text: "There was a problem creating your account",
+						icon: "error",
+						confirmButtonText: "Try again",
+					});
+				});
+			}
 		})
-			.then((response) => {
-				if (!response.ok) {
-					throw new Error("Failed to create user");
-				}
-				return response.json();
-			})
-			.then((data) => {
-				console.log("User created:", data);
-				// Optionally, update state or show a success message
-			})
-			.catch((error) => {
-				console.error("Error creating user:", error);
-				// Optionally, show an error message
-			});
 	};
 
 	const handleDeleteUser = () => {
-		// Logic to delete a user
+		deleteUserAccount(deleteUserName).then((response) => {
+			if (!response.ok) {
+				Swal.fire({
+					title: 'Error!',
+					text: 'Failed to delete user'
+				});
+				throw new Error("Failed to delete user");
+			}
+			console.log("User deleted");
+			Swal.fire({
+				title: 'Success!',
+				text: 'User deleted successfully'
+			});
+		});
 	};
 
 	const handleChangePassword = () => {
-		// Logic to change user's password
+		ChangePassword(selectedUser, newPassword).then((response) => {
+			if (!response.ok) {
+				Swal.fire({
+					title: 'Error!',
+					text: 'Failed to change password'
+				});
+				throw new Error("Failed to change password");
+			}
+			console.log("Password changed");
+			Swal.fire({
+				title: 'Success!',
+				text: 'Password changed successfully'
+			});
+			setNewPassword("");
+		});
 	};
+
 
 	const handleUserChange = (event: any) => {
 		setSelectedUser(event.currentTarget.value);
