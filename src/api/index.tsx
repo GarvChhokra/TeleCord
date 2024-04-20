@@ -84,8 +84,36 @@ export const searchCommunity = async (search: string) => {
 	}
 };
 
+export const MakeAdmin = async (userEmail: string) => {
+	try {
+		const response = await fetch(
+			`${process.env.NEXT_PUBLIC_AWS_BACKEND_API_URL}/makeAdmin`,
+			{
+				method: "PUT",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					Email: userEmail,
+					Role: "Admin"
+				}),
+			}
+		);
+
+		if (!response.ok) {
+			throw new Error("Network response was not ok");
+		}
+
+		return response;
+	} catch (error) {
+		console.error("There was a problem with the makeAdmin API:", error);
+		throw error;
+	}
+}
+
 // joinCommunity API
 export const joinCommunity = async (communityId: string, username: string) => {
+	console.log("Joining community", communityId, username);
 	try {
 		const response = await fetch(
 			`${process.env.NEXT_PUBLIC_AWS_BACKEND_API_URL}/joinCommunity`,
@@ -290,7 +318,6 @@ export const deleteUserAccount = async (email: string) => {
 };
 
 export const DeleteCommunity = async (communityId: string) => {
-	console.log(communityId);
 	try {
 		const response = await fetch(
 			`${process.env.NEXT_PUBLIC_AWS_BACKEND_API_URL}/deleteCommunity`,
