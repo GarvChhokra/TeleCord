@@ -15,7 +15,7 @@ export const SignUpAPI = async (
 					Email: email,
 					Password: password,
 					Username: username,
-					Role: "Member",
+					UserRole: "Member",
 				}),
 			}
 		);
