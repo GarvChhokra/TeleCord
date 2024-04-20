@@ -45,7 +45,7 @@ const authOptions: NextAuthOptions = {
 			);
 
 			// add role to token
-			token.role = sessionUser.Role;
+			token.role = sessionUser.UserRole;
 
 			session.user = { ...session?.user, ...filteredSessionUser };
 
