@@ -44,7 +44,7 @@ const CommunityItem: React.FC<Community> = ({
 					icon: "success",
 					confirmButtonText: "OK",
 				}).then(() => {
-					window.location.reload();
+					window.location.href = "/chat"
 				});
 			} else {
 				Swal.fire({
