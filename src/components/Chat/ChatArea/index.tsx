@@ -101,8 +101,11 @@ const ChatArea = ({
 		if (files && files.length > 0) {
 			try {
 				const promises = files.map(async (file) => {
+					// Get file name
+					const fileName = file.name;
+
 					// Send a request to your backend to save the file to S3
-					const response = await saveImageToS3(file);
+					const response = await saveImageToS3(file, fileName);
 
 					// Parse the response to get the filename
 					const fileUrl = response.fileUrl;
@@ -239,6 +242,7 @@ const ChatArea = ({
 				{chats.length > 0 ? (
 					<>
 						{chats.map((chat: any, index: number) => {
+							console.log(chat)
 							return (
 								<div key={index} className="flex flex-row gap-2 my-4">
 									<div className="text-black my-auto mx-2">

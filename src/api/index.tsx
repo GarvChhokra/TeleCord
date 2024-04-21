@@ -227,7 +227,7 @@ export const saveImageToS3 = async (file: File, fileName?: String) => {
 		// Create the fileData object with base64 data and filename
 		const fileData = {
 			file_bytes: base64,
-			file_name: `${fileName}.png` || file.name,
+			file_name: `${fileName}` || file.name,
 		};
 
 		// Send a POST request to upload the file to S3
